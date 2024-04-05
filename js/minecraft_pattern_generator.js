@@ -49,7 +49,7 @@ function show_lines_of_symmetry(){
         
         
         //For each tile in the preview
-        const currentTiles = [...document.querySelectorAll('.tile')];
+        const currentTiles = [...document.querySelectorAll('.preview-tile-canvas')];
 
         currentTiles.forEach(tile => {
             const ctx = tile.getContext("2d");
@@ -73,12 +73,12 @@ function show_lines_of_symmetry(){
     }
     else {
         //For the selection
-        const base_triangle_tile_0_0 = document.getElementById('base_triangle_tile_0_0');
+        const base_triangle_tile_0_0 = document.getElementById('base_triangle_tile_canvas_0_0');
         const ctx = base_triangle_tile_0_0.getContext("2d");
         ctx.clearRect(0, 0, base_triangle_tile_0_0.width, base_triangle_tile_0_0.height);
 
         //For each tile in the preview
-        const currentTiles = [...document.querySelectorAll('.tile')];
+        const currentTiles = [...document.querySelectorAll('.preview-tile-canvas')];
         currentTiles.forEach(tile => {            
             const ctx = tile.getContext("2d");
             ctx.clearRect(0, 0, tile.width, tile.height);
@@ -94,20 +94,34 @@ function createPatternPreview(){
     //Add the tiles to the tileContainer
     for (var y = 0; y < tile_count_height.value; y++) {
         for (var x = 0; x < tile_count_width.value; x++) {
-            const tile = document.getElementById(`tile_${x}_${y}`);
-            
+            const tile = document.getElementById(`tile_div_${x}_${y}`);
             if(x % 2 === 1){
                 if(y % 2 === 1)
-                    tile.style = 'transform: rotate(180deg)'
+                    tile.style = 'transform: scaleX(-1) scaleY(-1);'
                 else
-                    tile.style = 'transform: rotate(90deg)'
+                    tile.style = 'transform: scaleX(-1)';
             }
             else{
                 if(y % 2 === 1)
-                    tile.style = 'transform: rotate(-90deg)'
+                    tile.style = 'transform: scaleY(-1)';
             }
         }
     }
+}
+
+function rotateTilesInPreviewPattern(base_triangle_tile, new_rotation){
+
+    //TODO make different selector based on base_triangle_tile
+    const tiles = [...document.querySelectorAll('.preview-tile')];    
+    
+    
+    tiles.forEach(tile => {
+        tile.classList.remove("rotated_0");
+        tile.classList.remove("rotated_90");
+        tile.classList.remove("rotated_180");
+        tile.classList.remove("rotated_270");
+        tile.classList.add(new_rotation); 
+    });
 }
 
 // Create Tiles
@@ -126,12 +140,23 @@ function createTiles(){
     //Add the tiles to the tileContainer
     for (var y = 0; y < tile_count_height.value; y++) {
         for (var x = 0; x < tile_count_width.value; x++) {
-            const tile = document.createElement("canvas");
-            tile.id = `tile_${x}_${y}`;
-            tile.className = "tile";
-            tile.width="100";
-            tile.height="100";
-            tileContainer.appendChild(tile);
+
+
+
+
+            const tile_div = document.createElement("div");
+            tile_div.id = `tile_div_${x}_${y}`;
+            tile_div.className = "preview-tile rotated_0 yellow_glazed_terracotta";
+            tileContainer.appendChild(tile_div);
+
+
+
+            const tile_canvas = document.createElement("canvas");
+            tile_canvas.id = `tile_canvas_${x}_${y}`;
+            tile_canvas.className = "preview-tile-canvas";
+            tile_canvas.width = "100";
+            tile_canvas.height = "100";
+            tile_div.appendChild(tile_canvas);
         }
     }
 
@@ -156,218 +181,6 @@ function refreshTiles(){
 function tileCountChanged()
 {
     refreshTiles()
-}
-
-// set background positions
-function setImagePositions(tiles) {
-    const container = tiles[0].parentElement; // tile-container
-    tiles.forEach(tile => {
-        // set image size
-        //tile.style.backgroundSize = `${container.offsetWidth}px ${container.offsetHeight}px`;
-        // 		set image position
-        // tile.style.backgroundPosition = `-${tile.offsetLeft}px -${tile.offsetTop}px`;
-    });
-}
-
-// setting memory
-function setMemory(tiles) {
-    let memObj = {};
-    tiles.forEach((tile, index) => {
-        memObj[tile.getAttribute('id')] = {
-            'index': index,
-            'id': tile.getAttribute('id') };
-
-    });
-    return memObj; // returns memory object
-}
-
-// check against memory to confirm complete
-function puzzleCompleteCheck(memory) {
-    const tiles = [...document.querySelectorAll('.tile')];
-    const result = tiles.every((tile, index) => {
-        // check if current position matches first position for all tiles
-        const tileID = tile.getAttribute('id');
-        return index === memory[tileID].index;
-    });
-    return result;
-}
-
-// check if the specified space is free
-function isSpaceFree(index) {
-    if (index === false) return false;
-    const currentTiles = [...document.querySelectorAll('.tile')];
-    const ind = Math.floor(parseFloat(index)) - 1;
-    if (currentTiles[ind].classList.contains('empty')) {
-        return {
-            'result': true,
-            'index': Math.floor(parseFloat(index)) };
-
-    }
-    return {
-        'result': false,
-        'index': Math.floor(parseFloat(index)) };
-
-}
-
-// functions to check if adjacent squares are on the same row or wrapped (e.g. shouldn't move to wrapped adjacent tiles!)
-function recursiveFindLowest(index, currentTiles) {
-    // keep taking the width of the row away from the current index until we hit below zero
-    // when can't go any lower, test the index value
-    // if this equals 1 (first tile), then the original tile was the left-most in it's row and so shouldn't accept left movements
-    let cur = index - Math.sqrt(currentTiles.length);
-    if (cur >= 0) {
-        return recursiveFindLowest(cur, currentTiles);
-    } else
-    {
-        if (index === 1) {
-            return false; // this means its a left edge and so not allowed
-        } else
-        {
-            return true;
-        }
-    }
-}
-function recursiveFindHighest(index, currentTiles) {
-    // keep adding the width of the row away to the current index until we hit below the number of total tiles
-    // when can't go any higher, test the index value
-    // if this equals the total number of tiles, then the original tile was the right-most in it's row and so shouldn't accept right movements
-    let cur = index + Math.sqrt(currentTiles.length);
-    if (cur <= currentTiles.length) {
-        return recursiveFindHighest(cur, currentTiles);
-    } else
-    {
-        if (index === currentTiles.length) {
-            return false; // this means its a right edge and so not allowed
-        } else
-        {
-            return true;
-        }
-    }
-}
-
-// movement functionality fn
-function swapTiles(currentIndex, swapIndex) {
-    // container and tiles
-    const tileContainer = document.querySelector('#preview_tile_container');
-    const currentTiles = [...document.querySelectorAll('.tile')];
-    // reset to zero indexed
-    const current = currentIndex - 1;
-    const swap = swapIndex - 1;
-    // items to swap
-    let swapItemOne = currentTiles[current];
-    let swapItemTwo = currentTiles[swap];
-    // fn
-    function swapElements(obj1, obj2) {
-        // create marker element and insert it where obj1 is
-        var temp = document.createElement("div");
-        obj1.parentNode.insertBefore(temp, obj1);
-        // move obj1 to right before obj2
-        obj2.parentNode.insertBefore(obj1, obj2);
-        // move obj2 to right before where obj1 used to be
-        temp.parentNode.insertBefore(obj2, temp);
-        // remove temporary marker node
-        temp.parentNode.removeChild(temp);
-    }
-    swapElements(swapItemOne, swapItemTwo);
-}
-
-// movement trigger fn
-function triggerTileMovement(thisTile, currentTiles) {
-    // get current position with findIndex
-    const currentIndex = currentTiles.findIndex(tile => tile.id === thisTile.id) + 1; // otherwise zero index
-    // check for empty spaces
-    const root = Math.sqrt(currentTiles.length); // get width of rows (always 3x3, 4x4 etc.)
-    // status obj to be filled by promisified checking functions
-    let movementStatuses = {
-        'top': {
-            'allow': false,
-            'index': false },
-
-        'bottom': {
-            'allow': false,
-            'index': false },
-
-        'left': {
-            'allow': false,
-            'index': false },
-
-        'right': {
-            'allow': false,
-            'index': false } };
-
-
-
-    // try one tile above (basically go forward by width of rows unless that takes you off the grid)
-    let checkTopPromise = new Promise(function (resolve) {
-        resolve(isSpaceFree(currentIndex - root >= 1 ? currentIndex - root : false));
-    }).
-    then(results => {
-        movementStatuses.top.allow = results.result;
-        movementStatuses.top.index = results.index;
-    }).
-    catch(err => console.error(err));
-
-    // try one tile below (basically go backwards by width of rows unless that takes you off the grid)
-    let checkBottomPromise = new Promise(function (resolve) {
-        resolve(isSpaceFree(currentIndex + root <= currentTiles.length ? currentIndex + root : false));
-    }).
-    then(results => {
-        movementStatuses.bottom.allow = results.result;
-        movementStatuses.bottom.index = results.index;
-    }).
-    catch(err => console.error(err));
-
-    // try one tile to the left
-    let checkLeftPromise = new Promise(function (resolve) {
-        let leftTile = false; // default
-        // prevent checking past lowest
-        if (currentIndex - 1 >= 1) {
-            leftTile = currentIndex - 1;
-            // don't allow wrap!!!!
-            if (!recursiveFindLowest(currentIndex, currentTiles)) {
-                leftTile = false;
-            }
-        }
-        resolve(isSpaceFree(leftTile));
-    }).
-    then(results => {
-        movementStatuses.left.allow = results.result;
-        movementStatuses.left.index = results.index;
-    }).
-    catch(err => console.error(err));
-
-    // try one tile to the right
-    let checkRightPromise = new Promise(function (resolve) {
-        let rightTile = false; // default
-        // prevent checking past highest
-        if (currentIndex + 1 <= currentTiles.length) {
-            rightTile = currentIndex + 1;
-            // don't allow wrap!!!!
-            if (!recursiveFindHighest(currentIndex, currentTiles)) {
-                rightTile = false;
-            }
-        }
-        resolve(isSpaceFree(rightTile));
-    }).
-    then(results => {
-        movementStatuses.right.allow = results.result;
-        movementStatuses.right.index = results.index;
-    }).
-    catch(err => console.error(err));
-
-    // now try the available direction!
-    Promise.all([checkTopPromise, checkBottomPromise, checkLeftPromise, checkRightPromise]).then(() => {
-        // loop over movement status object to try moving
-        if (Object.keys(movementStatuses).length > 0 && movementStatuses.constructor === Object) {
-            for (const property in movementStatuses) {
-                if (movementStatuses[property] && movementStatuses[property].allow === true) {
-                    // trigger tile swap!
-                    swapTiles(currentIndex, movementStatuses[property].index); // current tile index + tile index to swap with
-                }
-            }
-        }
-    });
-
 }
 
 // kick off functionality
@@ -445,7 +258,7 @@ function getBaseTriangleColumnSize(){
 }
 
 function createBaseTriangleTiles(){
-    const baseTriangle_columns = getBaseTriangleColumnSize() + 1;
+    const baseTriangle_columns = getBaseTriangleColumnSize();
     const baseTriangle_rows = baseTriangle_columns;
 
     //Change the CSS for the tileContainer
@@ -461,8 +274,10 @@ function createBaseTriangleTiles(){
         for (var x = 0; x < baseTriangle_rows; x++) {
             const tile_div = document.createElement("div");
             tile_div.id = `base_triangle_tile_div_${x}_${y}`;
-            tile_div.className = "base-triangle-container-tile rotated_0";
-
+            tile_div.className = "base-triangle-container-tile rotated_0 yellow_glazed_terracotta";
+            
+            if(x === 10 && y === 0)
+                tile_div.classList.add("purple_glazed_terracotta")
 
             if (x + y >= baseTriangle_columns) {
                 tile_div.classList.remove("base-triangle-container-tile")
@@ -495,32 +310,37 @@ function createBaseTriangleTiles(){
 
 function base_triangle_tile_clicked(baseTriangleTile) {
     
-    rotate_right(baseTriangleTile.parentElement);
+    const new_rotation = rotate_right(baseTriangleTile.parentElement);
+    rotateTilesInPreviewPattern(baseTriangleTile, new_rotation);
+    
 //    const baseTriangleType = document.getElementById("base_triangle_type");
 //    console.log(baseTriangleType.value);
 }
 
-function rotate_right(tile_div){
-    const classList = tile_div.classList;
+function rotate_right(base_triangle_tile){
+    const classList = base_triangle_tile.classList;
+    var new_rotation;
     
     if(classList.contains("rotated_0")){
         classList.remove("rotated_0");
-        classList.add("rotated_90");
+        new_rotation = "rotated_90";
     }
     else if(classList.contains("rotated_90")){
         classList.remove("rotated_90");
-        classList.add("rotated_180");
+        new_rotation = "rotated_180";
     }
     else if(classList.contains("rotated_180")){
         classList.remove("rotated_180");
-        classList.add("rotated_270");
+        new_rotation = "rotated_270";
     }
     else if(classList.contains("rotated_270")){
         classList.remove("rotated_270");
-        classList.add("rotated_0");
+        new_rotation = "rotated_0";
     }
     else
         classList.add("rotated_90");
-        
+
+    classList.add(new_rotation);
+    return new_rotation;
 
 }

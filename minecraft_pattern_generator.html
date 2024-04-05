@@ -12,6 +12,7 @@
     <div class="minecraft-pattern">
       <div class="controls-container">
         <h1>*442 Pattern</h1>
+        <div>For more information about this patter, watch the video from <a href="https://www.youtube.com/watch?v=rND-gWvnk6o"> WhiteStoneJazz </a> . </div><br>
         <div class="control-line">
           <input type="checkbox" id="show_lines_of_symmetry" name="show_lines_of_symmetry" checked=true onchange="show_lines_of_symmetry()">
           <label for="show_lines_of_symmetry"> Show lines of symmetry</label><br>
@@ -19,11 +20,10 @@
 
         <div class="control-line">
           <label for="base_triangle_type">Base triangle:</label>
+          <input type="number" id="base_triangle_type_number" name="base_triangle_type_number" min="1" max="10" value="1">
           <select name="base_triangle_type" id="base_triangle_type">
-            <option value="1_block_diagonal">1 block diagonal</option>
-            <option value="1_block_inline">1 block inline</option>
-            <option value="opel">Opel</option>
-            <option value="audi">Audi</option>
+            <option value="diagonal"> diagonal</option>
+            <option value="inline"> inline</option>
           </select>
         </div>
         <div id="base_triangle_container" class="base-triangle-container">
