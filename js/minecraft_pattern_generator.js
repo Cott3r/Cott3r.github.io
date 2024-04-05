@@ -95,7 +95,7 @@ function createPatternPreview(){
     for (var y = 0; y < tile_count_height.value; y++) {
         for (var x = 0; x < tile_count_width.value; x++) {
             const tile = document.getElementById(`tile_div_${x}_${y}`);
-            if(x % 2 === 1){
+/*            if(x % 2 === 1){
                 if(y % 2 === 1)
                     tile.style = 'transform: scaleX(-1) scaleY(-1);'
                 else
@@ -104,6 +104,16 @@ function createPatternPreview(){
             else{
                 if(y % 2 === 1)
                     tile.style = 'transform: scaleY(-1)';
+            }            */
+            if(x % 2 === 1){
+                if(y % 2 === 1)
+                    tile.style = 'transform: rotate(180deg)'
+                else
+                    tile.style = 'transform: rotate(-90deg)'
+            }
+            else{
+                if(y % 2 === 1)
+                    tile.style = 'transform: rotate(90deg)'
             }
         }
     }
@@ -141,9 +151,6 @@ function createTiles(){
     for (var y = 0; y < tile_count_height.value; y++) {
         for (var x = 0; x < tile_count_width.value; x++) {
 
-
-
-
             const tile_div = document.createElement("div");
             tile_div.id = `tile_div_${x}_${y}`;
             tile_div.className = "preview-tile rotated_0 yellow_glazed_terracotta";
@@ -164,8 +171,7 @@ function createTiles(){
 }
 
 function removeAllTiles(){
-    console.log("removeAllTiles");
-    const currentTiles = [...document.querySelectorAll('.tile')];
+    const currentTiles = [...document.getElementById("preview_tile_container").childNodes];
 
     currentTiles.forEach(tile => {
         tile.remove();
@@ -258,7 +264,7 @@ function getBaseTriangleColumnSize(){
 }
 
 function createBaseTriangleTiles(){
-    const baseTriangle_columns = getBaseTriangleColumnSize();
+    const baseTriangle_columns = document.getElementById("base_triangle_type_number").value;
     const baseTriangle_rows = baseTriangle_columns;
 
     //Change the CSS for the tileContainer
