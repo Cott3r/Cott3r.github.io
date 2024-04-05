@@ -1,0 +1,117 @@
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background: #f4f4f4;
+}
+
+.minecraft-pattern {
+	position: relative;
+	padding: 20px;
+	background: #e6e6e6;
+	border-radius: 2px;
+	border: 2px solid #e4e4e4;
+	display: grid;
+	grid-template-columns: 1fr auto;
+	grid-template-rows: 1fr;
+}
+
+.tile-container {
+	position: relative;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: minmax(200px, auto) minmax(200px, auto) minmax(200px, auto) minmax(200px, auto); 
+	width: 830px;
+	max-width: 830px;
+	flex-wrap: wrap;
+}
+
+.tile {
+	display: block;
+	flex: 0 1 auto;
+	height: 100%;
+	width: 100%;
+	border-radius: 1px;
+	box-shadow: 1px 1px 3px 0px grey;
+	background-size: 930px 930px; // this is the size of the container
+	background-position: center; // this should be based on the distance from the container edges
+	background-image: url('https://raw.githubusercontent.com/Recidvst/recidvst-images/master/lake-cabin-min.jpg');
+	transition: all .15s ease;
+	// the empty tile
+	&.empty {
+		background: transparent;
+		box-shadow: none;
+		border: none;
+	}
+	
+	&:hover {
+		&:not(.empty) {
+		cursor: pointer;
+		// filter: hue-rotate(20deg);
+		box-shadow: 1px 1px 3px 1px grey;
+		transform: scale(1.01);
+		}
+	}
+}
+
+.controls-container {
+	display: block;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: column;
+	padding: 0 20px 0 0;
+	background: #e6e6e6;
+	border: 2px solid #e6e6e6;
+	border-right: none;
+}
+.control-button {
+	display: block;
+	width: 100%;
+	padding: 10px 16px;
+	margin: 5px auto;
+	background: #017153;
+	border: 1px solid #017153; 
+	color: white;
+	font-size: 18px;
+	border-radius: 2px;
+	&:hover {
+		cursor: pointer;
+	}
+	// disabled state
+	&:disabled {
+		background: #c5c5c5;
+		border-color: #c5c5c5;
+		&:hover {
+			cursor: not-allowed;
+		}
+	}
+}
+// reference image
+.reference-img {
+	display: block;
+	width: 100%;
+	max-width: 300px;
+	margin: 5px auto;
+	padding: 2px;
+	border: 2px solid #017153;
+	border-radius: 2px;
+	background: #c8e8c8;
+}
+h1 {
+	margin: 5px 0;
+	text-align: center;
+	font-size: 1.75rem;
+}
+h2 {
+	margin: 0;
+	max-width: 300px;
+	text-align: center;
+	font-size: 1rem;
+}
+
+/** TODOS */
+// add tooltip to tiles
+// animate tiles on movement

@@ -1,6 +1,5 @@
-MIT License
+The MIT License (MIT)
 
-Copyright (c) 2024 Cott3r
 Copyright (c) 2024 Chris (https://codepen.io/Recidvst/pen/yLYGvVZ)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
