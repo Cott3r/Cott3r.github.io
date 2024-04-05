@@ -1,3 +1,5 @@
+@import "minecraft_blocks.css";
+
 :root{
     --tile-container-grid-template-columns: 4;
     --tile-container-grid-template-rows: 4;
@@ -100,18 +102,6 @@ body {
     background: transparent;
     box-shadow: none;
     border: none;
-}
-
-.purple_glazed_terracotta::before {
-
-    background: url("../purple_glazed_terracotta.png");
-    background-size: contain;
-}
-
-.yellow_glazed_terracotta::before {
-
-    background: url("../yellow_glazed_terracotta.png");
-    background-size: contain;
 }
 
 .tile-container {
