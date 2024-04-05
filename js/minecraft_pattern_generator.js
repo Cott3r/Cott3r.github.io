@@ -33,14 +33,14 @@ function show_lines_of_symmetry(){
         const line_width = 5;
         
         //For the selection
-        const tile_test = document.getElementById('tile_test');
-        const ctx = tile_test.getContext("2d");
+        const base_triangle_tile_0_0 = document.getElementById('base_triangle_tile_canvas_0_0');
+        const ctx = base_triangle_tile_0_0.getContext("2d");
 
         // Draw one Line
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        ctx.lineTo(tile_test.width, tile_test.height);
-        ctx.lineTo(0, tile_test.height);
+        ctx.lineTo(base_triangle_tile_0_0.width, 0);
+        ctx.lineTo(0, base_triangle_tile_0_0.height);
         ctx.lineTo(0, 0);
         ctx.lineWidth = line_width;
         ctx.strokeStyle = "red";
@@ -56,12 +56,16 @@ function show_lines_of_symmetry(){
             
             // Draw one Line
             ctx.beginPath();
+            //Around the tile
             ctx.moveTo(0, 0);
+            ctx.lineTo(tile.width, 0);
             ctx.lineTo(tile.width, tile.height);
             ctx.lineTo(0, tile.height);
             ctx.lineTo(0, 0);
-            ctx.lineTo(tile.width, 0);
-            ctx.lineTo(tile.width, tile.height);
+            //The diagonal
+            ctx.moveTo(tile.width, 0);
+            ctx.lineTo(0, tile.height);
+            
             ctx.lineWidth = line_width;
             ctx.strokeStyle = "red";
             ctx.stroke();
@@ -69,9 +73,9 @@ function show_lines_of_symmetry(){
     }
     else {
         //For the selection
-        const tile_test = document.getElementById('tile_test');
-        const ctx = tile_test.getContext("2d");
-        ctx.clearRect(0, 0, tile_test.width, tile_test.height);
+        const base_triangle_tile_0_0 = document.getElementById('base_triangle_tile_0_0');
+        const ctx = base_triangle_tile_0_0.getContext("2d");
+        ctx.clearRect(0, 0, base_triangle_tile_0_0.width, base_triangle_tile_0_0.height);
 
         //For each tile in the preview
         const currentTiles = [...document.querySelectorAll('.tile')];
@@ -143,7 +147,7 @@ function removeAllTiles(){
     });
 }
 
-function refreshPreview(){
+function refreshTiles(){
     removeAllTiles();
     createTiles();
     show_lines_of_symmetry();
@@ -151,7 +155,7 @@ function refreshPreview(){
 
 function tileCountChanged()
 {
-    refreshPreview()
+    refreshTiles()
 }
 
 // set background positions
@@ -370,6 +374,7 @@ function triggerTileMovement(thisTile, currentTiles) {
 window.addEventListener('load', () => {
     
     createTiles();
+    createBaseTriangleTiles();
     show_lines_of_symmetry();
     /*
     const startTiles = [...document.querySelectorAll('.tile')];
@@ -426,3 +431,96 @@ window.addEventListener('load', () => {
         tileContainer.classList.add('complete');
     });*/
 }, false);
+
+// Base Triangle
+function getBaseTriangleColumnSize(){
+    const baseTriangleType = document.getElementById("base_triangle_type");
+    
+    switch (baseTriangleType.value) {
+        case "1_block_diagonal": return 1;
+        case "1_block_inline": return 1;
+    }
+    
+    return 1;
+}
+
+function createBaseTriangleTiles(){
+    const baseTriangle_columns = getBaseTriangleColumnSize() + 1;
+    const baseTriangle_rows = baseTriangle_columns;
+
+    //Change the CSS for the tileContainer
+    const document_style = document.documentElement.style;
+    document_style.setProperty("--base-triangle-tile-container-grid-columns", baseTriangle_columns);
+    document_style.setProperty("--base-triangle-tile-container-grid-rows", baseTriangle_rows);
+    document_style.setProperty("--controls-container-width", `${((baseTriangle_columns * 100) + 100)}px`);
+
+
+    const baseTriangleContainer = document.getElementById("base_triangle_container");
+    //Add the tiles to the tileContainer
+    for (var y = 0; y < baseTriangle_columns; y++) {
+        for (var x = 0; x < baseTriangle_rows; x++) {
+            const tile_div = document.createElement("div");
+            tile_div.id = `base_triangle_tile_div_${x}_${y}`;
+            tile_div.className = "base-triangle-container-tile rotated_0";
+
+
+            if (x + y >= baseTriangle_columns) {
+                tile_div.classList.remove("base-triangle-container-tile")
+                tile_div.classList.add('empty');
+            }
+            baseTriangleContainer.appendChild(tile_div);
+            
+            
+            
+            const tile_canvas = document.createElement("canvas");
+            tile_canvas.id = `base_triangle_tile_canvas_${x}_${y}`;
+            tile_canvas.className = "base-triangle-canvas";
+            tile_canvas.width = "100";
+            tile_canvas.height = "100";
+            // add tile click listener
+            tile_canvas.onclick = function () {
+            }
+            tile_canvas.addEventListener('click', e => {
+                base_triangle_tile_clicked(e.target);
+            });
+            if (x + y >= baseTriangle_columns) {
+                tile_canvas.classList.add('empty');
+            }
+
+            tile_div.appendChild(tile_canvas);
+        }
+    }
+
+}
+
+function base_triangle_tile_clicked(baseTriangleTile) {
+    
+    rotate_right(baseTriangleTile.parentElement);
+//    const baseTriangleType = document.getElementById("base_triangle_type");
+//    console.log(baseTriangleType.value);
+}
+
+function rotate_right(tile_div){
+    const classList = tile_div.classList;
+    
+    if(classList.contains("rotated_0")){
+        classList.remove("rotated_0");
+        classList.add("rotated_90");
+    }
+    else if(classList.contains("rotated_90")){
+        classList.remove("rotated_90");
+        classList.add("rotated_180");
+    }
+    else if(classList.contains("rotated_180")){
+        classList.remove("rotated_180");
+        classList.add("rotated_270");
+    }
+    else if(classList.contains("rotated_270")){
+        classList.remove("rotated_270");
+        classList.add("rotated_0");
+    }
+    else
+        classList.add("rotated_90");
+        
+
+}

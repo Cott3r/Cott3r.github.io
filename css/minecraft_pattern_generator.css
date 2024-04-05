@@ -1,6 +1,9 @@
 :root{
     --tile-container-grid-template-columns: 4;
     --tile-container-grid-template-rows: 4;
+    --base-triangle-tile-container-grid-columns: 1;
+    --base-triangle-tile-container-grid-rows: 1;
+    --controls-container-width: 200px;
 }
 
 body {
@@ -21,6 +24,106 @@ body {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto
     /*grid-template-rows: repeat(5, 1fr);*/
+}
+
+.base-triangle-container {
+    position: relative;
+    padding: 20px;
+    display: grid;
+    grid-gap: 0;
+    grid-template-columns: repeat(var(--base-triangle-tile-container-grid-columns), 100px);
+    grid-template-rows: repeat(var(--base-triangle-tile-container-grid-rows), 100px);
+    flex-wrap: wrap;
+
+}
+
+/*.base-triangle-container-tile {
+    display: block;
+    image-rendering: pixelated;
+    background-size: 100%; !* this is the size of the container*!
+    background-position: center; !* this should be based on the distance from the container edges*!
+    transform: rotate(0deg);
+
+
+    &:hover {
+        &:not(.empty) {
+            cursor: pointer;
+            !* filter: hue-rotate(20deg);*!
+            box-shadow: 1px 1px 3px 3px grey;
+            transform: scale(1.01);
+        }
+    }
+}
+
+.base-triangle-container-tile.empty {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}*/
+
+.base-triangle-canvas {
+    position: absolute;
+}
+
+.base-triangle-container-tile {
+    width: 100px;
+    height: 100px;
+    display: block;
+    transform: rotate(0deg);
+
+    transition: all .15s ease;
+    &:hover {
+        &:not(.empty) {
+            cursor: pointer;
+            /* filter: hue-rotate(20deg);*/
+            box-shadow: 1px 1px 3px 3px grey;
+            transform: scale(1.01);
+        }
+    }
+
+    &::before {
+        position: absolute;
+        content:"";
+        width: 100px;
+        height: 100px;
+        background: url("../yellow_glazed_terracotta.png");
+        image-rendering: pixelated;
+        background-size: 100%;
+    }
+}
+
+
+.base-triangle-container-tile.rotated_0 {
+    &::before{
+        transform: rotate(0deg);
+    }
+}
+
+
+.base-triangle-container-tile.rotated_90 {
+    &::before{
+        transform: rotate(90deg);
+    }
+}
+
+
+.base-triangle-container-tile.rotated_180 {
+    &::before{
+        transform: rotate(180deg);
+    }
+}
+
+
+.base-triangle-container-tile.rotated_270 {
+    &::before{
+        transform: rotate(-90deg);
+    }
+}
+
+.empty {
+    background: transparent;
+    box-shadow: none;
+    border: none;
 }
 
 .tile-container {
@@ -60,12 +163,12 @@ body {
     align-items: center;
     flex-direction: column;
     padding: 0 20px 0 0;
-    background: #e6e6e6;
+    //background: #e6e6e6;
     border: 2px solid #e6e6e6;
     border-right: none;
 
-    min-width: 100px;
-    max-width: 300px;
+    min-width: 250px;
+    width: var(--controls-container-width);
 }
 
 .control-button {
@@ -90,29 +193,6 @@ body {
     }
 }
 }
-/* reference image*/
-   .reference-img {
-       display: block;
-       width: 100%;
-       max-width: 300px;
-       margin: 5px auto;
-       border: 2px solid #017153;
-       border-radius: 2px;
-       background-image: url("../yellow_glazed_terracotta.png");
-       image-rendering: pixelated;
-       background-size: 100% 100%; /* this is the size of the container*/
-       background-position: center; /* this should be based on the distance from the container edges*/
-       transition: all .15s ease;
-
-       &:hover {
-           &:not(.empty) {
-               cursor: pointer;
-               /* filter: hue-rotate(20deg);*/
-               box-shadow: 1px 1px 3px 1px grey;
-               transform: scale(1.01);
-           }
-       }
-   }
 h1 {
     margin: 5px 0;
     text-align: center;
