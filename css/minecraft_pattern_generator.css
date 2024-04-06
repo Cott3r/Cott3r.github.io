@@ -3,8 +3,8 @@
 :root{
     --tile-container-grid-template-columns: 4;
     --tile-container-grid-template-rows: 4;
-    --base-triangle-tile-container-grid-columns: 1;
-    --base-triangle-tile-container-grid-rows: 1;
+    --base-triangle-size: 100px;
+    --base-triangle-tile-container-grid-size: 1;
     --controls-container-width: 200px;
 }
 
@@ -30,11 +30,11 @@ body {
 
 .base-triangle-container {
     position: relative;
-    padding: 20px;
+    padding: 0px;
     display: grid;
     grid-gap: 0;
-    grid-template-columns: repeat(var(--base-triangle-tile-container-grid-columns), 100px);
-    grid-template-rows: repeat(var(--base-triangle-tile-container-grid-rows), 100px);
+    grid-template-columns: repeat(var(--base-triangle-tile-container-grid-size), 100px);
+    grid-template-rows: auto;
     flex-wrap: wrap;
 
 }
@@ -74,10 +74,10 @@ body {
     }
 }
 
-
-.rotated_0::before {
-
-    transform: rotate(0deg);
+.rotated_0 {
+    &::before{
+        transform: rotate(0deg);
+    }
 }
 
 .rotated_90 {
@@ -109,8 +109,8 @@ body {
     padding: 20px;
     display: grid;
     grid-gap: 0px;
-    grid-template-columns: repeat(var(--tile-container-grid-template-columns), 100px);
-    grid-template-rows: repeat(var(--tile-container-grid-template-rows), 100px);
+    grid-template-columns: repeat(var(--tile-container-grid-template-columns), var(--base-triangle-size));
+    grid-template-rows: repeat(var(--tile-container-grid-template-rows), var(--base-triangle-size));
     flex-wrap: wrap;
 }
 
