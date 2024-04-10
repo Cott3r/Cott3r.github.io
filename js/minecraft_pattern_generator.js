@@ -388,8 +388,8 @@ function createPreviewTiles() {
 
     //Change the CSS for the tileContainer
     const document_style = document.documentElement.style;
-    document_style.setProperty("--tile-container-grid-template-columns", Math.floor(tile_count_height.value / baseTriangle_size));
-    document_style.setProperty("--tile-container-grid-template-rows", Math.floor(tile_count_width.value / baseTriangle_size));
+    document_style.setProperty("--tile-container-grid-template-columns", Math.floor(tile_count_width.value / baseTriangle_size));
+    document_style.setProperty("--tile-container-grid-template-rows", Math.floor(tile_count_height.value / baseTriangle_size));
 
     //Add the tiles to the tileContainer
     for (var y_block = 0; y_block < Math.floor(tile_count_height.value / baseTriangle_size); y_block++) {
