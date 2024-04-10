@@ -32,7 +32,7 @@ window.addEventListener('load', () => {
     });
 }, false);
 
-/*window.onbeforeunload = function (e) {
+window.onbeforeunload = function (e) {
     e = e || window.event;
 
     // For IE and Firefox prior to version 4
@@ -42,7 +42,7 @@ window.addEventListener('load', () => {
 
     // For Safari
     return 'Sure?';
-};*/
+};
 
 function base_triangle_draw_one_tile_of_symmetry(ctx, tile) {
 
