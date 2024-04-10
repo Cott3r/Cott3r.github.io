@@ -1,8 +1,35 @@
 
+let rotate_modus_selected = true;
+
 // Load everything
 window.addEventListener('load', () => {
     refreshBaseTriangleTiles();
     refreshPreviewTiles();
+
+
+
+    // button click listeners
+    // rotate_button
+    rotate_button.addEventListener('click', e => {
+        if (!rotate_button.hasAttribute('disabled')) {
+            rotate_button.setAttribute('disabled', true);
+        }
+        if (change_texture_button.hasAttribute('disabled')) {
+            change_texture_button.removeAttribute('disabled');
+        }
+        rotate_modus_selected = true;
+    });
+
+    // rotate_button
+    change_texture_button.addEventListener('click', e => {
+        if (!change_texture_button.hasAttribute('disabled')) {
+            change_texture_button.setAttribute('disabled', true);
+        }
+        if (rotate_button.hasAttribute('disabled')) {
+            rotate_button.removeAttribute('disabled');
+        }
+        rotate_modus_selected = false;
+    });
 }, false);
 
 /*window.onbeforeunload = function (e) {
@@ -204,6 +231,10 @@ function get_texture_from_tile(tile){
     var texture = "yellow_glazed_terracotta";
     const classList = tile.classList;
 
+    if(!classList.contains("baseTriangleContainerTiles")) {
+        console.error("get_texture_from_tile only works with baseTriangleContainerTiles. We got", tile);
+    }
+
     classList.forEach(class_String => {
         if(!class_String.includes("baseTriangleContainerTiles") &&
             !class_String.includes("base-triangle-container-tile") &&
@@ -243,6 +274,37 @@ function setTileTexturesInPreviewPattern(base_triangle_tile, new_texture) {
 
         tiles.forEach(tile => {
             setTileTexture(tile, new_texture)
+        });
+    }
+}
+
+function changeTextureInTilesInPreviewPattern(base_triangle_tile, new_texture, old_texture) {
+    const x = parseInt(base_triangle_tile.dataset.x);
+    const y = parseInt(base_triangle_tile.dataset.y);
+
+    const baseTriangle_size = parseInt(document.getElementById("base_triangle_number").value);
+
+    if (x + y <= (baseTriangle_size - 1)) {
+        const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
+        const tiles = [...document.querySelectorAll(querySelectorString)];
+
+        tiles.forEach(tile => {
+            tile.classList.remove(old_texture);
+            tile.classList.add(new_texture);
+        });
+    }
+
+    //Mirrored Tiles
+    if (x + y < (baseTriangle_size - 1)) {
+        const x_mirrored = baseTriangle_size - y - 1;
+        const y_mirrored = baseTriangle_size - x - 1;
+
+        const querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+        const tiles = [...document.querySelectorAll(querySelectorString)];
+
+        tiles.forEach(tile => {
+            tile.classList.remove(old_texture);
+            tile.classList.add(new_texture);
         });
     }
 }
@@ -446,12 +508,32 @@ function base_triangle_tile_clicked(baseTriangleTile) {
         return;
     }
 
-
-    const new_rotation = rotate_right(baseTriangleTile.parentElement);
-    rotateTilesInPreviewPattern(baseTriangleTile, new_rotation);
+    if(rotate_modus_selected){
+        const new_rotation = rotate_base_triangle_right(baseTriangleTile.parentElement);
+        rotateTilesInPreviewPattern(baseTriangleTile, new_rotation);
+    }
+    else
+    {
+        const old_texture = get_texture_from_tile(baseTriangleTile.parentElement);
+        const new_texture = change_base_triangle_texture(baseTriangleTile.parentElement, old_texture);
+        console.log(old_texture, new_texture);
+        changeTextureInTilesInPreviewPattern(baseTriangleTile, new_texture, old_texture)
+    }
 }
 
-function rotate_right(base_triangle_tile) {
+function change_base_triangle_texture(base_triangle_tile, old_texture) {
+
+    const classList = base_triangle_tile.classList;
+    var new_texture = document.getElementById("base_triangle_texture").value;
+
+
+    classList.remove(old_texture);
+    classList.add(new_texture);
+
+    return new_texture;
+}
+
+function rotate_base_triangle_right(base_triangle_tile) {
     const classList = base_triangle_tile.classList;
     var new_rotation;
 
