@@ -52,14 +52,43 @@ function base_triangle_draw_one_tile_of_symmetry(ctx, tile) {
     ctx.beginPath();
 
     const baseTriangle_size = parseInt(document.getElementById("base_triangle_number").value);
+    const baseTriangleType = document.getElementById("base_triangle_type");
 
-    if (baseTriangle_size === 1) {
-        //The triangle
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, tile.height);
-        ctx.lineTo(tile.width, 0);
-        ctx.lineTo(0, 0);
-    } else if (baseTriangle_size > 1) {
+
+    if(baseTriangleType.value === "inline")
+    {
+        //Horizontal line on top
+        if (tile.dataset.y === "0") {
+            ctx.moveTo(0, 0);
+            ctx.lineTo(tile.width, 0);
+        }
+        //Diagonal line on the left
+        if (parseInt(tile.dataset.x) * 2 < baseTriangle_size - 1 &&
+            parseInt(tile.dataset.x) === parseInt(tile.dataset.y)) {
+            ctx.moveTo(0, 0);
+            ctx.lineTo(tile.width, tile.height);
+        }
+        //Diagonal line on the right
+        if (parseInt(tile.dataset.x) * 2 >= baseTriangle_size &&
+            parseInt(tile.dataset.x) + parseInt(tile.dataset.y) === (baseTriangle_size - 1)) {
+            ctx.moveTo(tile.width, 0);
+            ctx.lineTo(0, tile.height);
+        }
+        //Triangle Tip
+        if (parseInt(tile.dataset.x) * 2 === baseTriangle_size - 1 &&
+            parseInt(tile.dataset.x) === parseInt(tile.dataset.y)) {
+            ctx.moveTo(0, 0);
+            ctx.lineTo(tile.width / 2, tile.height / 2);
+            ctx.lineTo(tile.width, 0);
+        }
+
+
+        //Draw
+        ctx.lineWidth = line_width;
+        ctx.strokeStyle = "red";
+        ctx.stroke();
+    }
+    else if (baseTriangleType.value === "diagonal") {
         //Horizontal line on top
         if (tile.dataset.y === "0") {
             ctx.moveTo(0, 0);
@@ -75,14 +104,14 @@ function base_triangle_draw_one_tile_of_symmetry(ctx, tile) {
             ctx.moveTo(tile.width, 0);
             ctx.lineTo(0, tile.height);
         }
+
+
+
+        //Draw
+        ctx.lineWidth = line_width;
+        ctx.strokeStyle = "red";
+        ctx.stroke();
     }
-
-
-    //The diagonal
-    ctx.moveTo(tile.width, 0);
-    ctx.lineWidth = line_width;
-    ctx.strokeStyle = "red";
-    ctx.stroke();
 }
 
 function preview_draw_one_tile_of_symmetry(ctx, tile) {
@@ -93,22 +122,12 @@ function preview_draw_one_tile_of_symmetry(ctx, tile) {
     ctx.beginPath();
 
     const baseTriangle_size = parseInt(document.getElementById("base_triangle_number").value);
+    const baseTriangleType = document.getElementById("base_triangle_type");
+    const y_mod_base_triangle = Math.floor(tile.dataset.y % baseTriangle_size);
+    const x_mod_base_triangle = Math.floor(tile.dataset.x % baseTriangle_size);
 
-    if (baseTriangle_size === 1) {
-        //Around the tile
-        ctx.moveTo(0, 0);
-        ctx.lineTo(tile.width, 0);
-        ctx.lineTo(tile.width, tile.height);
-        ctx.lineTo(0, tile.height);
-        ctx.lineTo(0, 0);
-        //The diagonal
-        ctx.moveTo(tile.width, 0);
-        ctx.lineTo(0, tile.height);
-    } else if (baseTriangle_size > 1) {
-
-        const y_mod_base_triangle = Math.floor(tile.dataset.y % baseTriangle_size);
-        const x_mod_base_triangle = Math.floor(tile.dataset.x % baseTriangle_size);
-
+    if(baseTriangleType.value === "inline")
+    {
         //Horizontal line on top
         if (y_mod_base_triangle === 0) {
             ctx.moveTo(0, 0);
@@ -129,17 +148,68 @@ function preview_draw_one_tile_of_symmetry(ctx, tile) {
             ctx.moveTo(tile.width, 0);
             ctx.lineTo(tile.width, tile.height);
         }
-        //Diagonal Line
+        //Diagonal Lines
         if (x_mod_base_triangle + y_mod_base_triangle === (baseTriangle_size - 1)) {
             ctx.moveTo(tile.width, 0);
             ctx.lineTo(0, tile.height);
         }
+        if (x_mod_base_triangle === y_mod_base_triangle) {
+            ctx.moveTo(0, 0);
+            ctx.lineTo(tile.width, tile.height);
+        }
+
+
+        //Draw
+        ctx.lineWidth = line_width;
+        ctx.strokeStyle = "red";
+        ctx.stroke();
     }
+    else if (baseTriangleType.value === "diagonal") {
+
+        if (baseTriangle_size === 1) {
+            //Around the tile
+            ctx.moveTo(0, 0);
+            ctx.lineTo(tile.width, 0);
+            ctx.lineTo(tile.width, tile.height);
+            ctx.lineTo(0, tile.height);
+            ctx.lineTo(0, 0);
+            //The diagonal
+            ctx.moveTo(tile.width, 0);
+            ctx.lineTo(0, tile.height);
+        } else if (baseTriangle_size > 1) {
+
+            //Horizontal line on top
+            if (y_mod_base_triangle === 0) {
+                ctx.moveTo(0, 0);
+                ctx.lineTo(tile.width, 0);
+            }
+            //Vertical line on the left
+            if (x_mod_base_triangle === 0) {
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, tile.height);
+            }
+            //Horizontal line on bottom
+            if (y_mod_base_triangle === (baseTriangle_size - 1)) {
+                ctx.moveTo(0, tile.height);
+                ctx.lineTo(tile.width, tile.height);
+            }
+            //Vertical line on the right
+            if (x_mod_base_triangle === (baseTriangle_size - 1)) {
+                ctx.moveTo(tile.width, 0);
+                ctx.lineTo(tile.width, tile.height);
+            }
+            //Diagonal Line
+            if (x_mod_base_triangle + y_mod_base_triangle === (baseTriangle_size - 1)) {
+                ctx.moveTo(tile.width, 0);
+                ctx.lineTo(0, tile.height);
+            }
+        }
 
 
-    ctx.lineWidth = line_width;
-    ctx.strokeStyle = "red";
-    ctx.stroke();
+        ctx.lineWidth = line_width;
+        ctx.strokeStyle = "red";
+        ctx.stroke();
+    }
 }
 
 function remove_lines_of_symmetry() {
@@ -254,27 +324,80 @@ function setTileTexturesInPreviewPattern(base_triangle_tile, new_texture) {
     const y = parseInt(base_triangle_tile.dataset.y);
 
     const baseTriangle_size = parseInt(document.getElementById("base_triangle_number").value);
+    const baseTriangleType = document.getElementById("base_triangle_type");
 
-    if (x + y <= (baseTriangle_size - 1)) {
-        const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
-        const tiles = [...document.querySelectorAll(querySelectorString)];
+    if(baseTriangleType.value === "diagonal") {
+        if (x + y <= (baseTriangle_size - 1)) {
+            const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
+            const tiles = [...document.querySelectorAll(querySelectorString)];
 
-        tiles.forEach(tile => {
-            setTileTexture(tile, new_texture)
-        });
+            tiles.forEach(tile => {
+                setTileTexture(tile, new_texture)
+            });
+        }
+
+        //Mirrored Tiles
+        if (x + y < (baseTriangle_size - 1)) {
+            const x_mirrored = baseTriangle_size - y - 1;
+            const y_mirrored = baseTriangle_size - x - 1;
+
+            const querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            const tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                setTileTexture(tile, new_texture)
+            });
+        }
     }
+    else if(baseTriangleType.value === "inline")
+    {
+        if (x >= y &&
+            x + y <= (baseTriangle_size - 1)) {
+            const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
+            const tiles = [...document.querySelectorAll(querySelectorString)];
 
-    //Mirrored Tiles
-    if (x + y < (baseTriangle_size - 1)) {
-        const x_mirrored = baseTriangle_size - y - 1;
-        const y_mirrored = baseTriangle_size - x - 1;
+            tiles.forEach(tile => {
+                setTileTexture(tile, new_texture)
+            });
+        }
 
-        const querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
-        const tiles = [...document.querySelectorAll(querySelectorString)];
+        //Mirrored Tiles
+        if (x >= y &&
+            x + y <= (baseTriangle_size - 1)) {
 
-        tiles.forEach(tile => {
-            setTileTexture(tile, new_texture)
-        });
+            //Slash diagonal
+            var x_mirrored = baseTriangle_size - y - 1;
+            var y_mirrored = baseTriangle_size - x - 1;
+
+            var querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            var tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                setTileTexture(tile, new_texture)
+            });
+
+            //Backslash diagonal
+            x_mirrored = y;
+            y_mirrored = x;
+
+            querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                setTileTexture(tile, new_texture)
+            });
+
+            //Both Slash and backslash mirrored
+            x_mirrored = baseTriangle_size - x - 1;
+            y_mirrored = baseTriangle_size - y - 1;
+
+            querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                setTileTexture(tile, new_texture)
+            });
+        }
     }
 }
 
@@ -283,29 +406,85 @@ function changeTextureInTilesInPreviewPattern(base_triangle_tile, new_texture, o
     const y = parseInt(base_triangle_tile.dataset.y);
 
     const baseTriangle_size = parseInt(document.getElementById("base_triangle_number").value);
+    const baseTriangleType = document.getElementById("base_triangle_type");
 
-    if (x + y <= (baseTriangle_size - 1)) {
-        const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
-        const tiles = [...document.querySelectorAll(querySelectorString)];
+    if(baseTriangleType.value === "diagonal") {
+        if (x + y <= (baseTriangle_size - 1)) {
+            const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
+            const tiles = [...document.querySelectorAll(querySelectorString)];
 
-        tiles.forEach(tile => {
-            tile.classList.remove(old_texture);
-            tile.classList.add(new_texture);
-        });
+            tiles.forEach(tile => {
+                tile.classList.remove(old_texture);
+                tile.classList.add(new_texture);
+            });
+        }
+
+        //Mirrored Tiles
+        if (x + y < (baseTriangle_size - 1)) {
+            const x_mirrored = baseTriangle_size - y - 1;
+            const y_mirrored = baseTriangle_size - x - 1;
+
+            const querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            const tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                tile.classList.remove(old_texture);
+                tile.classList.add(new_texture);
+            });
+        }
     }
+    else if(baseTriangleType.value === "inline") {
+        if (x >= y &&
+            x + y <= (baseTriangle_size - 1)) {
+            const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
+            const tiles = [...document.querySelectorAll(querySelectorString)];
 
-    //Mirrored Tiles
-    if (x + y < (baseTriangle_size - 1)) {
-        const x_mirrored = baseTriangle_size - y - 1;
-        const y_mirrored = baseTriangle_size - x - 1;
+            tiles.forEach(tile => {
+                tile.classList.remove(old_texture);
+                tile.classList.add(new_texture);
+            });
+        }
 
-        const querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
-        const tiles = [...document.querySelectorAll(querySelectorString)];
+        //Mirrored Tiles
+        if (x >= y &&
+            x + y <= (baseTriangle_size - 1)) {
 
-        tiles.forEach(tile => {
-            tile.classList.remove(old_texture);
-            tile.classList.add(new_texture);
-        });
+            //Slash diagonal
+            var x_mirrored = baseTriangle_size - y - 1;
+            var y_mirrored = baseTriangle_size - x - 1;
+
+            var querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            var tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                tile.classList.remove(old_texture);
+                tile.classList.add(new_texture);
+            });
+
+            //Backslash diagonal
+            x_mirrored = y;
+            y_mirrored = x;
+
+            querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                tile.classList.remove(old_texture);
+                tile.classList.add(new_texture);
+            });
+
+            //Both Slash and backslash mirrored
+            x_mirrored = baseTriangle_size - x - 1;
+            y_mirrored = baseTriangle_size - y - 1;
+
+            querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                tile.classList.remove(old_texture);
+                tile.classList.add(new_texture);
+            });
+        }
     }
 }
 
@@ -322,27 +501,109 @@ function rotateTilesInPreviewPattern(base_triangle_tile, new_rotation) {
     const y = parseInt(base_triangle_tile.dataset.y);
 
     const baseTriangle_size = parseInt(document.getElementById("base_triangle_number").value);
+    const baseTriangleType = document.getElementById("base_triangle_type");
 
-    if (x + y <= (baseTriangle_size - 1)) {
-        const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
-        const tiles = [...document.querySelectorAll(querySelectorString)];
+    if(baseTriangleType.value === "diagonal") {
+        if (x + y <= (baseTriangle_size - 1)) {
+            const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
+            const tiles = [...document.querySelectorAll(querySelectorString)];
 
-        tiles.forEach(tile => {
-            rotateTile(tile, new_rotation)
-        });
+            tiles.forEach(tile => {
+                rotateTile(tile, new_rotation)
+            });
+        }
+
+        //Mirrored Tiles
+        if (x + y < (baseTriangle_size - 1)) {
+            const x_mirrored = baseTriangle_size - y - 1;
+            const y_mirrored = baseTriangle_size - x - 1;
+
+            const querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            const tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                rotateTile(tile, getMirroredRotation_slash(new_rotation))
+            });
+        }
     }
+    else if(baseTriangleType.value === "inline") {
+        if (x >= y &&
+            x + y <= (baseTriangle_size - 1)) {
+            const querySelectorString = `.connected_base_triangle_tile_div_${x}_${y}`;
+            const tiles = [...document.querySelectorAll(querySelectorString)];
 
-    //Mirrored Tiles
-    if (x + y < (baseTriangle_size - 1)) {
-        const x_mirrored = baseTriangle_size - y - 1;
-        const y_mirrored = baseTriangle_size - x - 1;
+            tiles.forEach(tile => {
+                rotateTile(tile, new_rotation)
+            });
+        }
 
-        const querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
-        const tiles = [...document.querySelectorAll(querySelectorString)];
+        //Mirrored Tiles
+        if (x > y &&
+            x + y < (baseTriangle_size - 1)) {
 
-        tiles.forEach(tile => {
-            rotateTile(tile, getMirroredRotation(new_rotation))
-        });
+            //Slash diagonal
+            var x_mirrored = baseTriangle_size - y - 1;
+            var y_mirrored = baseTriangle_size - x - 1;
+
+            var querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            var tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                rotateTile(tile, getMirroredRotation_slash(new_rotation))
+            });
+
+            //Backslash diagonal
+            x_mirrored = y;
+            y_mirrored = x;
+
+            querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                rotateTile(tile, getMirroredRotation_backslash(new_rotation))
+            });
+
+            //Both Slash and backslash mirrored
+            x_mirrored = baseTriangle_size - x - 1;
+            y_mirrored = baseTriangle_size - y - 1;
+
+            querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                rotateTile(tile, getMirroredRotation_slash(getMirroredRotation_backslash(new_rotation)))
+            });
+        }
+        //Directly on the diagonal part of the base triangle (slash)
+        else if (x > y &&
+            x + y === (baseTriangle_size - 1)) {
+
+
+
+            //Backslash diagonal
+            querySelectorString = `.connected_base_triangle_tile_div_${y}_${x}`;
+            tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                rotateTile(tile, getMirroredRotation_backslash(new_rotation))
+            });
+        }
+        //Directly on the diagonal part of the base triangle (backslash)
+        else if (x === y &&
+            x + y < (baseTriangle_size - 1)) {
+
+            var x_mirrored = baseTriangle_size - x - 1;
+            var y_mirrored = baseTriangle_size - y - 1;
+
+
+            //Backslash diagonal
+            querySelectorString = `.connected_base_triangle_tile_div_${x_mirrored}_${y_mirrored}`;
+            tiles = [...document.querySelectorAll(querySelectorString)];
+
+            tiles.forEach(tile => {
+                rotateTile(tile, getMirroredRotation_slash(getMirroredRotation_backslash(new_rotation)))
+            });
+        }
     }
 }
 
@@ -434,6 +695,7 @@ function createPreviewTiles() {
 
 function createBaseTriangleTiles() {
     const baseTriangle_size = document.getElementById("base_triangle_number").value;
+    const baseTriangleType = document.getElementById("base_triangle_type");
 
     //Change the CSS for the tileContainer
     const document_style = document.documentElement.style;
@@ -455,6 +717,11 @@ function createBaseTriangleTiles() {
                 tile_div.classList.add("purple_glazed_terracotta")
 
             if (x + y >= baseTriangle_size) {
+                tile_div.classList.remove("base-triangle-container-tile")
+                tile_div.classList.add('empty');
+            }
+            if (baseTriangleType.value === "inline" &&
+                y > x) {
                 tile_div.classList.remove("base-triangle-container-tile")
                 tile_div.classList.add('empty');
             }
@@ -557,7 +824,7 @@ function rotate_base_triangle_right(base_triangle_tile) {
 
 }
 
-function getMirroredRotation(rotation){
+function getMirroredRotation_slash(rotation){
 
     if (rotation === "rotated_0") {
         return "rotated_180";
@@ -567,6 +834,19 @@ function getMirroredRotation(rotation){
         return "rotated_0";
     } else if (rotation === "rotated_270") {
         return "rotated_270";
+    }
+}
+
+function getMirroredRotation_backslash(rotation){
+
+    if (rotation === "rotated_0") {
+        return "rotated_0";
+    } else if (rotation === "rotated_90") {
+        return "rotated_270";
+    } else if (rotation === "rotated_180") {
+        return "rotated_180";
+    } else if (rotation === "rotated_270") {
+        return "rotated_90";
     }
 }
 
